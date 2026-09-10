@@ -6,6 +6,7 @@ export default defineConfig({
   description: 'Deneuve 2 — ESP32-S3 と Arduino による蚊取りシステムの開発記録',
   base: process.env.PAGES_BASE_PATH || '/',
   themeConfig: {
+    socialLinks: [{ icon: 'github', link: 'https://github.com/ShigeichiroYamasaki/mosquito-trap-esp32s3' }],
     nav: [{ text: '開発を始める', link: '/getting-started' }, { text: '開発計画', link: '/roadmap' }],
     sidebar: [
       { text: 'プロジェクト', items: [
