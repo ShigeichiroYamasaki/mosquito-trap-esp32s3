@@ -14,6 +14,7 @@ export default defineConfig({
         { text: 'macOS / Arduino IDE', link: '/getting-started' },
         { text: 'ハードウェア', link: '/hardware' },
         { text: 'ハードウェアテスト版', link: '/hardware-test' },
+        { text: '自動検出・Webログ実行版', link: '/runtime' },
         { text: 'GitHub と公開手順', link: '/workflow' },
         { text: '開発計画・実験記録', link: '/roadmap' }
       ] }
