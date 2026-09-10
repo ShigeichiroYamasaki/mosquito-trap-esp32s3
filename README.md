@@ -1,6 +1,6 @@
 # Deneuve 2 — 蚊取りシステム
 
-現時点のシステム名は **Deneuve 2** です。
+現時点のシステム名は **Deneuve 2** です。使用ボードは **Freenove ESP32-S3（16MBモデル）**です。詳細品番とメモリ・USB 設定は実物を確認して確定します。
 
 ESP32-S3 を macOS の Arduino IDE から USB 接続で開発するプロジェクトです。Arduino スケッチと VitePress の開発ドキュメントを同じリポジトリで管理します。
 

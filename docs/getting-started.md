@@ -15,7 +15,7 @@ https://espressif.github.io/arduino-esp32/package_esp32_index.json
 
 ## ボードと USB の設定
 
-製品の公式説明に従ってボードを選択します。型番が不明な間の CI は `ESP32S3 Dev Module` を仮の対象とします。Flash / PSRAM の設定は実物に合わせてください。
+使用ボードは **Freenove ESP32-S3（16MBモデル）**です。詳細な製品品番・モジュール刻印と 16MB 表記の内訳は確認予定です。製品の公式説明に従ってボードを選択し、Flash / PSRAM / USB 設定を確定します。CI は引き続き `ESP32S3 Dev Module` を汎用のコンパイル対象とし、実機設定の検証とは区別します。
 
 | 接続方法 | シリアルの設定 |
 | --- | --- |
