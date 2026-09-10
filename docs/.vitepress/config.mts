@@ -11,6 +11,7 @@ export default defineConfig({
     sidebar: [
       { text: 'プロジェクト', items: [
         { text: '概要', link: '/' },
+        { text: '複眼方式の設計', link: '/detection-design' },
         { text: '誘引・検出・吸引の機構', link: '/mechanism' },
         { text: 'macOS / Arduino IDE', link: '/getting-started' },
         { text: 'ハードウェア', link: '/hardware' },

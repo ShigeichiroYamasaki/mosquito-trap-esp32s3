@@ -78,3 +78,4 @@ jobs:
           node-version: 24
       - run: c++ -std=c++11 tests/measurement_test.cpp -o /tmp/measurement-test && /tmp/measurement-test
       - run: node tests/measurement_ui_test.mjs
+      - run: c++ -std=c++11 tests/optical_rules_test.cpp -o /tmp/optical-rules-test && /tmp/optical-rules-test

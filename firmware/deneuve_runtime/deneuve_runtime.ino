@@ -3,6 +3,7 @@
 #include <WebServer.h>
 #include <ESP32Servo.h>
 #include "DetectionResult.h"
+#include "OpticalRules.h"
 
 // =====================
 // Wi-Fi
@@ -41,16 +42,14 @@ const int LED_LEFT = 0;
 const int LED_RIGHT = 1;
 
 const int ADC_SAMPLES = 3;
-const int LED_SETTLE_US = 250;
-const int OFF_SETTLE_US = 150;
+const int LED_SETTLE_US = 2000; // provisional: tune using optical_measure
+const int OFF_SETTLE_US = 2000;
 
 const float SHADOW_THRESHOLD = 0.15;
 const float LOCAL_CONTRAST_THRESHOLD = 0.08;
 const float MIN_TOTAL_SHADOW = 0.25;
 const int MIN_ACTIVE_PIXELS = 1;
 const int MAX_ACTIVE_PIXELS = 8;
-const int REQUIRED_CANDIDATE_FRAMES = 2;
-const float BASELINE_ALPHA = 0.002;
 
 // =====================
 // Pixel coordinates: staggered 6 x 3
@@ -72,6 +71,13 @@ float py[NUM_PIXELS] = {
 // =====================
 float signalNow[NUM_LEDS][NUM_PIXELS];
 float baseline[NUM_LEDS][NUM_PIXELS];
+bool validPixel[NUM_LEDS][NUM_PIXELS];
+int rawOff[NUM_PIXELS], rawOn[NUM_LEDS][NUM_PIXELS];
+uint32_t frameUs = 0, framePeriodUs = 0, previousFrameStart = 0;
+uint32_t phaseUs[3];
+OpticalTrack tracks[2];
+bool autoCapture = false; // arm after confirming vacuum is physically OFF
+bool frameHealthy = true;
 float shadowImg[NUM_LEDS][NUM_PIXELS];
 float mergedShadow[NUM_PIXELS];
 float prevMergedShadow[NUM_PIXELS];
@@ -228,10 +234,11 @@ void setMuxChannel(int ch) {
   digitalWrite(MUX_S1_PIN, ch & 0x02);
   digitalWrite(MUX_S2_PIN, ch & 0x04);
   digitalWrite(MUX_S3_PIN, ch & 0x08);
-  delayMicroseconds(8);
+  delayMicroseconds(50);
 }
 
 int readAdcAverage(int pin) {
+  analogRead(pin); // discard first sample after MUX change
   long sum = 0;
   for (int i = 0; i < ADC_SAMPLES; i++) {
     sum += analogRead(pin);
@@ -268,61 +275,43 @@ void setIrLed(int led) {
 // Optical scan
 // =====================
 void scanOpticalFrame() {
-  int background[NUM_PIXELS];
-
+  uint32_t started = micros();
+  framePeriodUs = previousFrameStart ? started - previousFrameStart : 0;
+  previousFrameStart = started;
   allIrOff();
   delayMicroseconds(OFF_SETTLE_US);
-
-  for (int p = 0; p < NUM_PIXELS; p++) {
-    background[p] = readPixelRaw(p);
-  }
-
+  phaseUs[0] = micros() - started;
+  for (int p = 0; p < NUM_PIXELS; p++) rawOff[p] = readPixelRaw(p);
   for (int l = 0; l < NUM_LEDS; l++) {
     setIrLed(l);
     delayMicroseconds(LED_SETTLE_US);
-
+    phaseUs[l + 1] = micros() - started;
     for (int p = 0; p < NUM_PIXELS; p++) {
-      int onValue = readPixelRaw(p);
-      float sig = background[p] - onValue;
-      if (sig < 0) sig = 0;
-      signalNow[l][p] = sig;
+      rawOn[l][p] = readPixelRaw(p);
+      signalNow[l][p] = rawOff[p] - rawOn[l][p]; // retain signed values
     }
-
-    allIrOff();
   }
+  allIrOff();
+  frameUs = micros() - started;
 }
 
 void calibrateBaseline() {
-  Serial.println("Calibrating baseline...");
-
-  for (int l = 0; l < NUM_LEDS; l++) {
-    for (int p = 0; p < NUM_PIXELS; p++) {
-      baseline[l][p] = 0;
-    }
-  }
-
-  const int rounds = 80;
-
-  for (int r = 0; r < rounds; r++) {
+  Serial.println("Calibration: keep optical path clear");
+  OpticalCalibration stats[2][18] = {};
+  for (int r = 0; r < 80; r++) {
     scanOpticalFrame();
-
-    for (int l = 0; l < NUM_LEDS; l++) {
-      for (int p = 0; p < NUM_PIXELS; p++) {
-        baseline[l][p] += signalNow[l][p];
-      }
-    }
-
-    delay(15);
+    for (int l = 0; l < 2; l++) for (int p = 0; p < 18; p++)
+      stats[l][p].add(rawOff[p], rawOn[l][p]);
+    delay(1);
   }
-
-  for (int l = 0; l < NUM_LEDS; l++) {
-    for (int p = 0; p < NUM_PIXELS; p++) {
-      baseline[l][p] /= rounds;
-      if (baseline[l][p] < 1) baseline[l][p] = 1;
-    }
+  Serial.println("led,pixel,baseline,sd,valid");
+  for (int l = 0; l < 2; l++) for (int p = 0; p < 18; p++) {
+    baseline[l][p] = stats[l][p].mean;
+    validPixel[l][p] = stats[l][p].valid();
+    Serial.printf("%d,%d,%.2f,%.2f,%d\n", l, p+1, baseline[l][p], stats[l][p].sd(), validPixel[l][p]);
   }
-
-  Serial.println("Baseline ready");
+  tracks[0].reset(); tracks[1].reset();
+  Serial.println("Baseline fixed; use c to recalibrate while disarmed");
 }
 
 // =====================
@@ -339,7 +328,7 @@ void makeShadowImage() {
     float maxS = 0;
 
     for (int l = 0; l < NUM_LEDS; l++) {
-      float s = 1.0 - signalNow[l][p] / baseline[l][p];
+      float s = validPixel[l][p] ? 1.0f - signalNow[l][p] / baseline[l][p] : 0;
       if (s < 0) s = 0;
       if (s > 1) s = 1;
 
@@ -366,22 +355,6 @@ float localContrastAt(int i) {
   if (count == 0) return 0;
   return mergedShadow[i] - sum / count;
 }
-
-void updateBaselineIfSafe(bool objectDetected) {
-  if (objectDetected) return;
-
-  for (int l = 0; l < NUM_LEDS; l++) {
-    for (int p = 0; p < NUM_PIXELS; p++) {
-      baseline[l][p] =
-        baseline[l][p] * (1.0 - BASELINE_ALPHA) +
-        signalNow[l][p] * BASELINE_ALPHA;
-
-      if (baseline[l][p] < 1) baseline[l][p] = 1;
-    }
-  }
-}
-
-
 
 DetectionResult analyzeShadow() {
   DetectionResult r = { false, 0, 0, 0, 0, 0, 0 };
@@ -422,21 +395,27 @@ DetectionResult analyzeShadow() {
   return r;
 }
 
-int candidateFrames = 0;
-
-bool updateMosquitoDecision(DetectionResult r) {
-  if (r.candidate) {
-    candidateFrames++;
-  } else {
-    candidateFrames = 0;
+bool updateMosquitoDecision(DetectionResult unused) {
+  bool detected = false;
+  frameHealthy = true;
+  for (int l = 0; l < 2; l++) {
+    float shadow[18];
+    int usable = 0;
+    bool healthy = true;
+    for (int i = 0; i < 18; i++) {
+      shadow[i] = shadowImg[l][i];
+      if (validPixel[l][i]) {
+        usable++;
+        if (rawOn[l][i] <= 20 || rawOn[l][i] >= 4075 ||
+            rawOff[i] <= 20 || rawOff[i] >= 4075 || signalNow[l][i] < -20)
+          healthy = false;
+      }
+    }
+    healthy = healthy && usable >= 12;
+    frameHealthy = frameHealthy && healthy;
+    detected = tracks[l].update(shadow, validPixel[l], millis(), healthy) || detected;
   }
-
-  if (candidateFrames >= REQUIRED_CANDIDATE_FRAMES) {
-    candidateFrames = 0;
-    return true;
-  }
-
-  return false;
+  return detected && frameHealthy;
 }
 
 void savePrevShadow() {
@@ -455,7 +434,13 @@ void handleRoot() {
   html += "<title>Mosquito Trap Logs</title>";
   html += "<style>body{font-family:sans-serif;margin:24px;}table{border-collapse:collapse;}td,th{border:1px solid #ccc;padding:6px 10px;}</style>";
   html += "</head><body>";
-  html += "<h2>Mosquito Trap Logs</h2>";
+  html += "<h2>Deneuve 2 — behavior candidates</h2>";
+  html += "<p>Auto capture: " + String(autoCapture ? "ARMED" : "DISARMED") + "</p>";
+  html += "<p>Frame scan / period (us): " + String(frameUs) + " / " + String(framePeriodUs) + "</p>";
+  html += "<p>Optics: " + String(frameHealthy ? "usable" : "check calibration / ADC") + "</p>";
+  html += "<table><tr><th>PT</th><th>Left baseline / valid</th><th>Right baseline / valid</th></tr>";
+  for (int i=0; i<18; i++) html += "<tr><td>" + String(i+1) + "</td><td>" + String(baseline[0][i]) + " / " + String(validPixel[0][i]) + "</td><td>" + String(baseline[1][i]) + " / " + String(validPixel[1][i]) + "</td></tr>";
+  html += "</table>";
   html += "<p>Uptime: " + String(millis() / 1000) + " sec</p>";
   html += "<p>Vacuum: ";
   html += vacuumBusy() ? "BUSY" : "IDLE";
@@ -484,7 +469,10 @@ void handleRoot() {
 }
 
 void handleJson() {
-  String json = "{\"logs\":[";
+  String json = "{\"frameUs\":" + String(frameUs) + ",\"periodUs\":" + String(framePeriodUs);
+  json += ",\"phaseUs\":[" + String(phaseUs[0]) + "," + String(phaseUs[1]) + "," + String(phaseUs[2]) + "]";
+  json += ",\"armed\":" + String(autoCapture ? "true" : "false") + ",\"healthy\":" + String(frameHealthy ? "true" : "false");
+  json += ",\"logs\":[";
   for (int i = 0; i < logCount; i++) {
     int idx = (logIndex - 1 - i + LOG_SIZE) % LOG_SIZE;
     if (i > 0) json += ",";
@@ -506,11 +494,13 @@ void setupWiFiAndWeb() {
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   Serial.print("Connecting WiFi");
 
-  while (WiFi.status() != WL_CONNECTED) {
+  uint32_t wifiStarted = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - wifiStarted < 10000) {
     delay(300);
     Serial.print(".");
   }
 
+  if (WiFi.status() != WL_CONNECTED) { Serial.println("Offline: serial available"); return; }
   Serial.println();
   Serial.print("Open: http://");
   Serial.println(WiFi.localIP());
@@ -528,6 +518,7 @@ void setup() {
   delay(1500);
 
   analogReadResolution(12);
+  analogSetAttenuation(ADC_11db);
 
   pinMode(MUX_S0_PIN, OUTPUT);
   pinMode(MUX_S1_PIN, OUTPUT);
@@ -547,10 +538,16 @@ void setup() {
 
   calibrateBaseline();
 
-  Serial.println("Mosquito trap ready");
+  Serial.println("Ready, DISARMED. a=arm (vacuum must be OFF), d=disarm, c=recalibrate");
 }
 
 void loop() {
+  if (Serial.available()) {
+    char command = Serial.read();
+    if (command == 'd') { autoCapture = false; Serial.println("DISARMED; active sequence completes stop press"); }
+    if (command == 'a' && !vacuumBusy()) { autoCapture = true; Serial.println("ARMED"); }
+    if (command == 'c' && !autoCapture && !vacuumBusy()) calibrateBaseline();
+  }
   server.handleClient();
   updateVacuumSequence();
 
@@ -559,15 +556,18 @@ void loop() {
 
   DetectionResult r = analyzeShadow();
   bool detected = updateMosquitoDecision(r);
+  if (vacuumBusy()) { tracks[0].reset(); tracks[1].reset(); detected = false; }
 
+  static DetectionResult lastShadow = {};
   if (detected) {
-    Serial.println("MOSQUITO DETECTED");
+    r = lastShadow; // event occurs on clear frame; retain preceding shadow diagnostics
+    Serial.println("BEHAVIOR CANDIDATE");
     addLog(r.activeCount, r.totalShadow, r.motion, r.maxLocalContrast, r.cx, r.cy);
-    startVacuumStrongSequence();
+    if (autoCapture) startVacuumStrongSequence();
   }
 
-  updateBaselineIfSafe(r.candidate);
+  if (!detected && r.activeCount > 0) lastShadow = r;
   savePrevShadow();
 
-  delay(5);
+  delay(1);
 }
