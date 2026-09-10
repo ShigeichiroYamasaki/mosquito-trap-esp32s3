@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+build/
+.env*
+!.env.example
+**/secrets.h

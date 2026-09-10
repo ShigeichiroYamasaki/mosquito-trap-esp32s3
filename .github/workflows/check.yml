@@ -1,0 +1,35 @@
+name: Check
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run docs:build
+        env:
+          PAGES_BASE_PATH: /mosquito-trap-esp32s3/
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: arduino/setup-arduino-cli@v2
+        with:
+          version: 1.5.1
+      - name: Install ESP32 core
+        run: |
+          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core install esp32:esp32@3.3.10 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+      - name: Compile generic S3 with native USB and UART settings
+        run: |
+          arduino-cli compile --fqbn esp32:esp32:esp32s3:CDCOnBoot=cdc firmware/mosquito_trap
+          arduino-cli compile --fqbn esp32:esp32:esp32s3:CDCOnBoot=default firmware/mosquito_trap
