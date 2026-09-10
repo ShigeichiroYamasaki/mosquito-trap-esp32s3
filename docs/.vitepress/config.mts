@@ -10,6 +10,7 @@ export default defineConfig({
     sidebar: [
       { text: 'プロジェクト', items: [
         { text: '概要', link: '/' },
+        { text: '誘引・検出・吸引の機構', link: '/mechanism' },
         { text: 'macOS / Arduino IDE', link: '/getting-started' },
         { text: 'ハードウェア', link: '/hardware' },
         { text: 'GitHub と公開手順', link: '/workflow' },
