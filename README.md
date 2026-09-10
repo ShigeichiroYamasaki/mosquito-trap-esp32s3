@@ -1,4 +1,6 @@
-# 蚊取りシステム / mosquito-trap-esp32s3
+# Deneuve 2 — 蚊取りシステム
+
+現時点のシステム名は **Deneuve 2** です。
 
 ESP32-S3 を macOS の Arduino IDE から USB 接続で開発するプロジェクトです。Arduino スケッチと VitePress の開発ドキュメントを同じリポジトリで管理します。
 

@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   lang: 'ja-JP',
-  title: '蚊取りシステム',
-  description: 'ESP32-S3 と Arduino による蚊取りシステムの開発記録',
+  title: 'Deneuve 2',
+  description: 'Deneuve 2 — ESP32-S3 と Arduino による蚊取りシステムの開発記録',
   base: process.env.PAGES_BASE_PATH || '/',
   themeConfig: {
     nav: [{ text: '開発を始める', link: '/getting-started' }, { text: '開発計画', link: '/roadmap' }],

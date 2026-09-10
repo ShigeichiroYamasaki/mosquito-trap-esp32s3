@@ -1,8 +1,8 @@
 ---
 layout: home
 hero:
-  name: 蚊取りシステム
-  text: ESP32-S3 でつくる、測定できる試作機
+  name: Deneuve 2
+  text: ESP32-S3 でつくる蚊取りシステム
   tagline: Arduino IDE × macOS × USB / ソースと開発記録を GitHub で管理
   actions:
     - theme: brand
@@ -19,6 +19,8 @@ features:
   - title: 小さく試して測定
     details: 接続確認から始め、人工皮膚・影の検出・吸引を個別に検証します。
 ---
+
+現時点のシステム名は **Deneuve 2** です。
 
 ## 誘引・捕獲の仕組み
 
