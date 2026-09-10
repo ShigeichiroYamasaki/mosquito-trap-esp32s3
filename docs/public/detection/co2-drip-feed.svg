@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" role="img" aria-labelledby="title desc">
+<title id="title">点滴バッグとペットボトルによるCO₂供給</title><desc id="desc">点滴バッグのクエン酸水溶液をシリコンチューブでペットボトル内の重曹粉末へ滴下する。発生したCO₂を別のシリコンチューブで開放混合部と専用ファンへ送る。人工皮膚は別流路に置く。</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#168496"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"Hiragino Sans",sans-serif;fill:#163047;font-size:18px}.title{font-size:28px;font-weight:700}.head{font-size:21px;font-weight:650}.tube{fill:none;stroke:#168496;stroke-width:5;stroke-linejoin:round}.outline{fill:#fff;stroke:#809bad;stroke-width:2}</style>
+<rect width="1100" height="700" rx="18" fill="#f6f8fc"/>
+<text x="30" y="44" class="title">点滴バッグ → 重曹入りペットボトル → CO₂専用ファン</text>
+<text x="30" y="78">青線：シリコンチューブ　／　模式図（寸法・接続部の詳細は省略）</text>
+<path d="M120 115 H260 Q278 115 278 140 V260 Q278 280 245 300 H215 V320 H175 V300 Q100 285 100 260 V140 Q100 115 120 115Z" class="outline"/>
+<path d="M105 183 H273 V260 Q273 277 240 295 H150 Q105 279 105 260Z" fill="#d6eefb"/>
+<text x="125" y="156" class="head">点滴バッグ</text><text x="119" y="215">クエン酸</text><text x="119" y="244">水溶液</text>
+
+<text x="30" y="413">液体用シリコンチューブ</text><text x="30" y="442">滴下速度を調整して供給</text>
+<rect x="464" y="284" width="92" height="30" rx="4" fill="#c8d8e4" stroke="#809bad"/>
+<path d="M465 314 V344 Q410 365 410 405 V548 Q410 568 430 568 H590 Q610 568 610 548 V405 Q610 365 555 344 V314" class="outline"/>
+<path d="M413 517 L443 502 L470 513 L503 498 L538 512 L576 502 L607 517 V548 Q607 565 590 565 H430 Q413 565 413 548Z" fill="#e3dfce"/>
+<text x="433" y="443" class="head">ペットボトル</text><text x="444" y="540">重曹粉末</text>
+<path d="M195 320 V368 H425 V280 H486 V337" class="tube" marker-end="url(#a)"/>
+<path d="M486 364 Q475 380 486 386 Q497 380 486 364Z" fill="#168496"/>
+<text x="433" y="405">クエン酸を滴下</text>
+<circle cx="543" cy="480" r="6" fill="#a5dbe4"/><circle cx="553" cy="458" r="4" fill="#a5dbe4"/>
+<path d="M540 336 V205 H792 V302" class="tube" marker-end="url(#a)"/>
+<text x="480" y="147">気体用シリコンチューブ</text><text x="480" y="175">CO₂を液面より上から取り出す</text>
+<rect x="707" y="315" width="345" height="130" rx="12" fill="#e9f5ff" stroke="#809bad"/>
+<text x="725" y="348" class="head">開放混合部 ＋ 専用5Vファン</text><text x="725" y="380">外気と混合して間欠送風</text><text x="725" y="410">555タイマー：4〜6秒間隔</text>
+<path d="M877 445 V495" class="tube" marker-end="url(#a)"/>
+<text x="715" y="525" class="head">噴出口 → 人工皮膚の近くへ</text><text x="715" y="554">靴下に直接風を当てない</text>
+<text x="30" y="615">人工皮膚（10cm角ケース・36°Cヒーター）は、このCO₂流路と分離する。</text>
+<text x="30" y="648">ファン停止中もガスの出口を確保する。チューブの閉塞や反応液・泡の流入を避ける。</text>
+<text x="30" y="680">材料量・滴下速度は理論値を目安とし、実際のCO₂流量を測定して調整する。</text>
+</svg>
