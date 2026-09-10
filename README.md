@@ -2,6 +2,8 @@
 
 ESP32-S3 を macOS の Arduino IDE から USB 接続で開発するプロジェクトです。Arduino スケッチと VitePress の開発ドキュメントを同じリポジトリで管理します。
 
+[開発ドキュメント](https://shigeichiroyamasaki.github.io/mosquito-trap-esp32s3/) · [GitHub](https://github.com/ShigeichiroYamasaki/mosquito-trap-esp32s3)
+
 ## 始め方
 
 - Arduino IDE で `firmware/mosquito_trap/mosquito_trap.ino` を開く。
