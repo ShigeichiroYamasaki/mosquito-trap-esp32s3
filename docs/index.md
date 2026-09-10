@@ -3,7 +3,6 @@ layout: home
 hero:
   name: Deneuve 2
   text: ESP32-S3 でつくる蚊取りシステム
-  tagline: Arduino IDE × macOS × USB / ソースと開発記録を GitHub で管理
   actions:
     - theme: brand
       text: 開発環境を準備
@@ -11,13 +10,6 @@ hero:
     - theme: alt
       text: GitHubの実行コード
       link: https://github.com/ShigeichiroYamasaki/mosquito-trap-esp32s3/tree/main/firmware/deneuve_runtime
-features:
-  - title: USB で開発
-    details: Mac の Arduino IDE から書き込み、シリアルモニタで状態を確認します。
-  - title: コードと記録を一緒に管理
-    details: スケッチ、配線情報、実験結果を同じリポジトリに保存します。
-  - title: 小さく試して測定
-    details: 接続確認から始め、人工皮膚・影の検出・吸引を個別に検証します。
 ---
 
 現時点のシステム名は **Deneuve 2** です。使用ボードは **Freenove ESP32-S3 Board Lite（カメラなし）**です。
