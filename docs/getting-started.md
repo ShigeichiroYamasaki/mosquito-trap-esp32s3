@@ -15,7 +15,7 @@ https://espressif.github.io/arduino-esp32/package_esp32_index.json
 
 ## ボードと USB の設定
 
-使用ボードは **Freenove ESP32-S3**です。製品の公式説明に従ってボードを選択します。現在記録している設定は **Flash Size: 16MB / PSRAM: OPI PSRAM（8MB）** です。詳細な製品品番・USB 設定は確認予定です。CI は引き続き `ESP32S3 Dev Module` を汎用のコンパイル対象とし、実機設定の検証とは区別します。
+使用ボードは **Freenove ESP32-S3 Board Lite（カメラなし）**です。製品の公式説明に従ってボードを選択します。現在記録している設定は **Flash Size: 16MB / PSRAM: OPI PSRAM（8MB）** です。USB 設定は確認予定です。CI は引き続き `ESP32S3 Dev Module` を汎用のコンパイル対象とし、実機設定の検証とは区別します。
 
 | 接続方法 | シリアルの設定 |
 | --- | --- |
