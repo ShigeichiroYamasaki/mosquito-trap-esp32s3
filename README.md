@@ -1,6 +1,6 @@
 # Deneuve 2 — 蚊取りシステム
 
-現時点のシステム名は **Deneuve 2** です。使用ボードは **Freenove ESP32-S3**です。Arduino IDE の設定は **Flash Size: 4MB / PSRAM: OPI PSRAM** です。詳細品番・メモリ容量・USB 設定は実物を確認して確定します。
+現時点のシステム名は **Deneuve 2** です。使用ボードは **Freenove ESP32-S3**です。Arduino IDE の設定は **Flash Size: 未確定（16MBの可能性あり） / PSRAM: OPI PSRAM** です。詳細品番・メモリ容量・USB 設定は実物を確認して確定します。
 
 ESP32-S3 を macOS の Arduino IDE から USB 接続で開発するプロジェクトです。Arduino スケッチと VitePress の開発ドキュメントを同じリポジトリで管理します。
 
