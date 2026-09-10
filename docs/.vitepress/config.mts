@@ -13,7 +13,7 @@ export default defineConfig({
         { text: '概要', link: '/' },
         { text: '複眼方式の設計', link: '/detection-design' },
         { text: '誘引・検出・吸引の機構', link: '/mechanism' },
-        { text: 'macOS / Arduino IDE', link: '/getting-started' },
+        { text: 'ESP32とArduino IDEの設定', link: '/getting-started' },
         { text: 'ハードウェア', link: '/hardware' },
         { text: 'ハードウェアテスト版', link: '/hardware-test' },
         { text: '光学測定・CSV収集', link: '/optical-measure' },
