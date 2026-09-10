@@ -24,6 +24,7 @@ hero:
 
 | コード | 内容 |
 | --- | --- |
+| [光学測定プログラム一式](https://github.com/ShigeichiroYamasaki/mosquito-trap-esp32s3/tree/main/firmware/optical_measure) | 左右LED・18点のADC比較、Web表示、CSV保存。 [使い方](./optical-measure.md) |
 | [実行版：deneuve_runtime.ino](https://github.com/ShigeichiroYamasaki/mosquito-trap-esp32s3/blob/main/firmware/deneuve_runtime/deneuve_runtime.ino) | 18点読み取り・影の候補判定・自動吸引・Webログ |
 | [実行版フォルダー一式](https://github.com/ShigeichiroYamasaki/mosquito-trap-esp32s3/tree/main/firmware/deneuve_runtime) | 型定義ヘッダーとWi-Fi設定例を含む。Arduino IDEで使う際はこちらを参照 |
 | [個別テスト：hardware_test.ino](https://github.com/ShigeichiroYamasaki/mosquito-trap-esp32s3/blob/main/firmware/hardware_test/hardware_test.ino) | LED・受光・サーボ・掃除機の個別テスト |

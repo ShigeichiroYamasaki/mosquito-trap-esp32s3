@@ -28,3 +28,7 @@ ESP32-S3 を macOS の Arduino IDE から USB 接続で開発するプロジェ�
 ## 実行版
 
 `firmware/deneuve_runtime/deneuve_runtime.ino` は18点読み取り、影の候補判定、自動吸引、LAN内のWebログを含みます。[設定方法・既知の確認点](docs/runtime.md)を参照してください。実機での統合動作は未検証です。Wi-Fi認証情報はGit管理対象外の `secrets.h` に設定します。
+
+## 光学測定・CSV収集
+
+`firmware/optical_measure/optical_measure.ino` は、18点の消灯・左右点灯値と差分をWeb表示し、CSV保存する測定専用スケッチです。サーボを操作しません。[接続・測定手順](docs/optical-measure.md)を参照してください。
