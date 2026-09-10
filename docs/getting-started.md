@@ -15,14 +15,14 @@ https://espressif.github.io/arduino-esp32/package_esp32_index.json
 
 ## ボードと USB の設定
 
-使用ボードは **Freenove ESP32-S3**です。製品の公式説明に従ってボードを選択します。現在記録している設定は **Flash Size: 未確定（16MBの可能性あり） / PSRAM: OPI PSRAM** です。詳細な製品品番・搭載メモリの実容量・USB 設定は確認予定です。CI は引き続き `ESP32S3 Dev Module` を汎用のコンパイル対象とし、実機設定の検証とは区別します。
+使用ボードは **Freenove ESP32-S3**です。製品の公式説明に従ってボードを選択します。現在記録している設定は **Flash Size: 16MB / PSRAM: OPI PSRAM** です。詳細な製品品番・PSRAM 容量・USB 設定は確認予定です。CI は引き続き `ESP32S3 Dev Module` を汎用のコンパイル対象とし、実機設定の検証とは区別します。
 
 | 接続方法 | シリアルの設定 |
 | --- | --- |
 | ESP32-S3 のネイティブ USB | USB CDC On Boot を Enabled に設定。USB Mode / Upload Mode は製品の案内に従う |
 | USB-UART ブリッジ側の端子 | 原則 USB CDC On Boot を Disabled に設定し UART 側のポートを選ぶ |
 
-Arduino IDE の **Tools → PSRAM → OPI PSRAM** を選択してください。**Flash Size は16MBの可能性がありますが、確認待ちです。** 直前の4MB指定は撤回されました。基板のモジュール刻印または購入した製品の仕様で搭載容量を確認してから Flash Size を設定します。PSRAM 容量も別途確認する項目です。
+Arduino IDE の **Tools → Flash Size → 16MB** と **Tools → PSRAM → OPI PSRAM** を選択してください。PSRAM 容量は別途確認する項目です。
 
 USB 端子が複数ある場合、使用する端子の役割を確認してください。Tools → Port で接続後に追加された `/dev/cu.*` を選びます。USB-UART 用ドライバーは搭載チップに応じてメーカー公式の案内を確認します。
 
